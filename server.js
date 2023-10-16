@@ -1,8 +1,7 @@
 import express from 'express'
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import UsersRoutes from './routes/usersRoutes.js'
-
+import UsersRoutes from './src/routes/usersRoutes.js'
 //express app
 const app = express()
 
