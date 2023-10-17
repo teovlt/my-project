@@ -2,6 +2,8 @@ import express from 'express'
 import 'dotenv/config'
 import mongoose from 'mongoose'
 import UsersRoutes from './src/routes/usersRoutes.js'
+import AuthRoutes from './src/routes/authRoutes.js'
+
 //express app
 const app = express()
 
@@ -14,7 +16,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use('/api/users', UsersRoutes)
-//app.use('/api/auth', AuthRoutes);
+app.use('/api/auth', AuthRoutes)
 
 //Connect to DB
 mongoose
@@ -22,7 +24,7 @@ mongoose
   .then(() => {
     //listen for requests
     app.listen(process.env.PORT, () => {
-      console.log('connected to db & listening on port', process.env.PORT)
+      console.log('connected to db & listening on port', process.env.PORT, '🚀')
     })
   })
   .catch((err) => {
