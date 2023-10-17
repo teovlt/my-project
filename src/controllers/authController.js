@@ -15,6 +15,9 @@ const signUp = async (req, res) => {
     const accessToken = generateAccessToken(user._id)
     res.status(200).json({ accessToken, user })
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(404).json({ error: 'Username already taken' })
+    }
     res.status(400).json({ error: err.message })
   }
 }
