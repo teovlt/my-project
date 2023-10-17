@@ -5,7 +5,7 @@ import UsersRoutes from './src/routes/usersRoutes.js'
 import AuthRoutes from './src/routes/authRoutes.js'
 import cors from 'cors'
 
-//Autoriser les requetes dans le front
+//Configuration du cors
 const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
