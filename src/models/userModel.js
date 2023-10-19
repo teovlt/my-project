@@ -19,4 +19,25 @@ const UserSchema = new Schema(
   }
 )
 
+UserSchema.static('login', async function (name, password) {
+  try {
+    // Search for the user in the database
+    const user = await this.findOne({ name: name.toLowerCase() })
+
+    // If the user is not found, throw an error
+    if (!user) throw new Error()
+
+    // Check the password
+    // const isPasswordCorrect = await user.comparePassword(password)
+
+    // // If the password is incorrect, throw an error
+    // if (!isPasswordCorrect) throw new Error()
+
+    return user
+  } catch (error) {
+    // Error handling
+    throw new Error(`Invalid credentials`)
+  }
+})
+
 export default mongoose.model('User', UserSchema)

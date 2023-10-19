@@ -2,11 +2,11 @@ import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 
 //Access token
-function generateAccessToken({ userId }) {
+function generateAccessToken(userId) {
   return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: `5m` })
 }
 
-function generateRefreshToken({ userId }) {
+function generateRefreshToken(userId) {
   return jwt.sign({ id: userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: `30d` })
 }
 
@@ -35,7 +35,7 @@ const signUp = async (req, res) => {
 const signIn = async (req, res) => {
   const { name, password } = req.body
   try {
-    const user = await User.findOne({ name: name, password: password })
+    const user = await User.login(name, password)
     if (!user) {
       return res.status(404).json({ error: 'No such user' })
     }
@@ -65,11 +65,13 @@ const signOut = async (req, res) => {
 const refreshToken = async (req, res) => {
   try {
     const accessToken = generateAccessToken(req.userId)
-    res.cookie('__refresh__token', refreshToken, {
-      maxAge: 1 * 60 * 60 * 24 * 30,
+    res.cookie('__refresh__token', req.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     })
-    res.status(200).json({ accessToken })
+    const user = await User.findById(req.userId)
+    //Supprimer le mdp de l'user
+    res.status(200).json({ accessToken, user })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

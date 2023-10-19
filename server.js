@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import UsersRoutes from './src/routes/usersRoutes.js'
 import AuthRoutes from './src/routes/authRoutes.js'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 //Configuration du cors
 const corsOptions = {
@@ -18,7 +19,9 @@ const app = express()
 
 //middleware
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use((req, res, next) => {
   console.log(req.path, req.method)
   next()
