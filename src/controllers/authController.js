@@ -11,19 +11,18 @@ function generateRefreshToken(userId) {
 }
 
 const signUp = async (req, res) => {
-  const { name, password } = req.body
-
   try {
-    const user = await User.create({ name: name, password: password })
+    const { name, password } = req.body
+    const user = await new User({ name: name, password: password }).save()
     const accessToken = generateAccessToken(user._id)
     const refreshToken = generateRefreshToken(user._id)
 
     res.cookie('__refresh__token', refreshToken, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     })
 
-    res.status(200).json({ accessToken, user })
+    return res.status(200).json({ accessToken, user })
   } catch (err) {
     if (err.code === 11000) {
       return res.status(404).json({ error: 'Username already taken' })
