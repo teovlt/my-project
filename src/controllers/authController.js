@@ -13,7 +13,7 @@ function generateRefreshToken(userId) {
 const signUp = async (req, res) => {
   try {
     const { name, password } = req.body
-    const user = await new User({ name: name, password: password }).save()
+    const user = await User.register(name, password)
     const accessToken = generateAccessToken(user._id)
     const refreshToken = generateRefreshToken(user._id)
 
@@ -68,8 +68,9 @@ const refreshToken = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     })
-    const user = await User.findById(req.userId)
-    //Supprimer le mdp de l'user
+
+    const user = await User.refresh(req.userId)
+
     res.status(200).json({ accessToken, user })
   } catch (err) {
     res.status(500).json({ error: err.message })
