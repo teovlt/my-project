@@ -19,4 +19,6 @@ router.put('/:id', authMiddleware.authenticateAccessToken, userController.update
 // DELETE a user
 router.delete('/:id', authMiddleware.authenticateAccessToken, userController.deleteUser)
 
+router.get('/me', authMiddleware.authenticateAccessToken, userController.me)
+
 export default router
