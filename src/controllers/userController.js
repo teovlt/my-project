@@ -59,15 +59,10 @@ const updateUser = async (req, res) => {
   res.status(200).json(user)
 }
 
-/**
- * Retreives details of the authenticated team based on the `teamId` passed in the request
- * @route GET /api/user/me
- * @group Users
- * @access Private
- */
 const me = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.userId }).select('-password')
+    console.log(user)
 
     if (!user) return res.status(404).json({ error: 'User not found' })
 
