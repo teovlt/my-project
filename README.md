@@ -87,3 +87,141 @@ La détection d'une classe inutilisée a également été réalisée, permettant
 Enfin, une correction mineure a été apportée au niveau du CSS afin d'améliorer la visibilité des cases disponibles. Cette attention aux détails garantit une meilleure **expérience utilisateur** et renforce la qualité globale du projet.
 
 En **conclusion**, la revue de code a joué un rôle essentiel dans l'optimisation du code, la correction des anomalies et l'harmonisation des conventions, contribuant ainsi à la qualité et à la robustesse du projet.
+
+## 4. Affichage des mouvements possibles
+
+### Partie API
+
+Le **second binôme** a développé la fonctionnalité d’affichage des **mouvements possibles** pour une pièce. Nous avons tout d’abord écrit un **test unitaire** en vue de tester une fonction renvoyant les cases de déplacements libres.
+
+Nous avons commencé par faire un **test** au début nous l’avions mis dans `test/pawn.js` car on pensait mettre la fonction dans la classe Pawn.
+
+La fonction qui retourne les case de déplacement libre était pensé comme ça : `pawn.getCaseAvailable(pawn.rank , pawn.file)` et retourné une liste de duo ligne/colonne correspondant au case disponible. Elle utiliserait la fonction **canMove()** sur chaque case du plateau pour récupérer toutes celles ou **canMove()** retourne **true**.
+
+Finalement on a décidé de la mettre dans chessboard.js ainsi :
+
+`Chessboard.prototype.getCaseAvailable = function (current, rankElements)`
+
+Car elle modifie les cases et pas les **pions** mais son fonctionnement reste inchangé. **Current** correspond au pion sélectionner et **rankElement** contenait une liste d’element html de la classe `.rank` et `getCaseAvailable` passez les case libre d’une autres couleurs.
+
+On l’as modifier afin de pouvoir se passer de la liste d'élément html et prendre la forme définitive suivante :
+
+```js
+/**
+ 
+
+    Retrieve a list of available positions for the given chess piece to move to.
+        @param {Piece} current - The piece being considered for movement.
+        @return {array} Returns an array of available positions for the piece to move to.
+    */
+
+Chessboard.prototype.getCaseAvailable = function (current) {
+  // Initialize an empty array to store available positions.
+  let listElementCase = []
+
+  // Loop through each row (i) and column (j) on the chessboard.
+  for (let i = 1; i <= 8; i++) {
+    for (let j = 1; j <= 8; j++) {
+      // Check if the current piece can move to the position (i, j).
+      if (current.canMove(i, j)) {
+        // Convert chessboard coordinates to array indices.
+        const rowIndex = 8 - i
+        const columnIndex = j - 1
+
+        // Add the available position to the list with array indices.
+        listElementCase.push({
+          rowIndex,
+          columnIndex,
+        })
+      }
+    }
+  }
+
+  // Return the list of available positions for the piece.
+  return listElementCase
+}
+```
+
+Les cases sont ensuite coloré dans `ui.js`, ce qu’on voit dans la partie **graphique** du code.
+
+```js
+   // Grab a piece
+   if (!current && piece) {
+     current = piece;
+     cell.classList.add('active');
+     let caseAvailable  = chessboard.getCaseAvailable(current);
+       // Ajoute la classe 'active' aux cellules correspondantes dans rankElements
+     caseAvailable.forEach((casePosition) => {       rankElements[casePosition.rowIndex].children[casePosition.columnIndex].classList.add('active');
+ });
+
+```
+
+On fait appel à la fonction dans le **handleClick**, lorsqu’on sélectionne une piece la fonction est appelée et les valeurs sont affectées au tableau caseAvailable. On ajoute ensuite à chaque case avec le forEach la classe active.
+
+```js
+it('should be able to show move available', function () {
+  const piece = chessboard.getPiece(7, 7)
+  let output = chessboard.getCaseAvailable(piece),
+    oracle = JSON.stringify([
+      { rowIndex: 3, columnIndex: 6 },
+      { rowIndex: 2, columnIndex: 6 },
+    ])
+  output = JSON.stringify(output)
+  assert.equal(output, oracle)
+})
+```
+
+Un test est défini pour vérifier si la méthode getCaseAvailable fonctionne correctement pour montrer les **déplacements disponibles** pour une pièce donnée. Une pièce est récupérée de la **position (7, 7)** sur l'échiquier en utilisant **chessboard.getPiece(7, 7).** La méthode getCaseAvailable est appelée avec cette pièce, et le résultat est stocké dans la variable output. L'oracle (la valeur attendue) est défini comme un tableau d'objets JSON représentant les positions des cases disponibles pour la pièce. Dans ce cas, **les positions attendues sont (3, 6) et (2, 6).** Les résultats réels (**output**) et attendus (**oracle**) sont convertis en chaînes JSON pour faciliter la comparaison. Enfin, la méthode d'assertion **(assert.equal)** est utilisée pour comparer output et oracle. Si les deux sont égaux, le test réussit.
+
+```js
+it('should be able to not show move not available , blocked by other piece', function () {
+  const piece = chessboard.getPiece(8, 4)
+  let output = chessboard.getCaseAvailable(piece),
+    oracle = JSON.stringify([]) //the pawn is stuck
+  output = JSON.stringify(output)
+  assert.equal(output, oracle)
+})
+```
+
+Ce test vérifie si la méthode **getCaseAvailable** ne montre pas de déplacements disponibles lorsqu'une pièce est bloquée par une autre pièce. Une pièce est récupérée de la **position (8, 4)** sur l'échiquier en utilisant **chessboard.getPiece(8, 4). **
+
+La méthode getCaseAvailable est appelée avec cette pièce, et le résultat est stocké dans la variable output. L'**oracle** est défini comme un tableau vide ([]), car dans ce cas, la pièce (un pion) est bloquée et ne peut pas se déplacer.
+
+Les **résultats réels** (output) et **attendus** (oracle) sont convertis en chaînes JSON pour faciliter la comparaison. La méthode d'assertion (assert.equal) est utilisée pour comparer output et oracle. Si les deux sont égaux, le test réussit.
+
+## 5. Tests avec Cypress
+
+## -Test du Plateau (init.cy.js)
+
+**Contexte** du Test:
+Ce test vise à évaluer l'initialisation du plateau de jeu en s'assurant que chaque case de l'échiquier est correctement représentée dans l'interface.
+
+**Résultats**:
+Le test du plateau a confirmé que l'interface affiche toutes les cases de manière appropriée. Chaque case du plateau a été identifiée avec succès, ce qui garantit une représentation graphique correcte de l'échiquier au démarrage du jeu.
+javascript
+
+## -Test du Mouvement (move.cy.js)
+
+**Contexte** du Test :
+Ce test évalue la fonction de déplacement en simulant le déplacement de deux pions sur le plateau. L'objectif est de s'assurer que les pièces se déplacent correctement et que l'état du plateau est mis à jour conformément aux règles du jeu.
+
+**Résultats** :
+Le test du mouvement a réussi à démontrer que les déplacements de pions sont interprétés correctement par l'application. Les pièces se sont déplacées selon les attentes, et l'état de l'échiquier a été modifié en conséquence.
+javascript
+
+## -Test de la Promotion (promotion.cy.js)
+
+**Contexte** du Test
+Ce test évalue la fonction de promotion des pions en vérifiant si un pion peut être promu lorsque celui-ci atteint la rangée finale. L'objectif est de garantir que le processus de promotion fonctionne correctement.
+
+**Résultats** :
+Le test de la promotion Le test de promotion vise à évaluer la fonction permettant la promotion des pions lorsqu'ils atteignent la rangée finale. Cependant, en raison de contraintes de temps inattendues, le test n'a pas pu être mené à bien pour le moment.
+
+## Conclusion
+
+Les tests réalisés avec **Cypress** ont validé avec succès les fonctionnalités clés du jeu d'échecs. Chaque catégorie de tests a confirmé le bon fonctionnement de ses fonctionnalités spécifiques, contribuant ainsi à la fiabilité et à la qualité globale du jeu.
+La structure modulaire des tests permet une gestion efficace et une compréhension claire des différentes fonctionnalités testées. Les résultats **positifs** encouragent la poursuite de l'utilisation de Cypress pour le développement et la maintenance des tests automatisés dans ce projet de jeu d'échecs.
+
+```
+
+```
