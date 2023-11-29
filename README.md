@@ -20,7 +20,7 @@ Pour faciliter la **coordination** au sein de notre équipe, nous avons opté po
 
 En parallèle, afin de renforcer la qualité du code produit, nous avons introduit le concept de **"Merge Request"**. Ce mécanisme offre un suivi rigoureux du développement et de l'intégration en soumettant chaque branche secondaire à l'approbation des membres du binôme n'ayant pas directement contribué à la Merge Request. Cette démarche favorise une évaluation croisée du code de qui permet de garantir un niveau élevé de qualité dans l'intégration des fonctionnalités au code principal.
 
-## 2. Intégration continue
+## 2. Intégration continue 🔄
 
 Avant d'entamer le développement des fonctionnalités, nous avons instauré un processus d'**intégration continue (CI)** afin d'assurer la qualité du code tout au long du cycle de développement.
 
@@ -48,7 +48,7 @@ Pour finir, nous avons complété la mise en place de l'**intégration continue*
 .eslintrc.json
 . Ce fichier a été configuré pour définir les règles de linting avec **ESLint**, renforçant ainsi la qualité du code en identifiant et corrigeant automatiquement les violations des **conventions de codage définies par l'équipe**.
 
-## 3. Promotion d’un pion
+## 3. Promotion d’un pion ♕
 
 ## Partie API
 
